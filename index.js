@@ -13,11 +13,16 @@ const levels = {
   default: 'USERLVL',
   60: 'FATAL',
   50: 'ERROR',
-  40: 'WARN ',
+  40: 'WARN',
   30: 'INFO ',
-  20: 'DEBUG',
+  20: 'DEBUG ',
   10: 'TRACE'
 }
+
+const levelsInverse = {}
+Object.keys(levels).forEach(level => {
+  levelsInverse[levels[level].trim()] = level
+})
 
 const defaultOptions = {
   colorize: chalk.supportsColor,
@@ -122,6 +127,11 @@ module.exports = function prettyFactory (options) {
     }
 
     var line = log.time ? `[${log.time}]` : ''
+
+    // Handle level labels instead of level values
+    if (typeof log.level === 'string') {
+      log.level = levelsInverse[log.level.toUpperCase()] || log.level
+    }
 
     const coloredLevel = levels.hasOwnProperty(log.level)
       ? color[log.level](levels[log.level])
